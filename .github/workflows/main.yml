@@ -3,6 +3,7 @@ name: Weather Update
 on:
   schedule:
     - cron: "30 21 * * *" # This runs the job at 7:30 AM AWST (replace with your timezone)
+  workflow_dispatch: # This allows manual runs using the "Run workflow" button
 
 jobs:
   update-weather:
