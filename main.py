@@ -53,12 +53,12 @@ def post_to_discord(data, next_update_time=None):
     # Format the message with the corrected temperature, condition, wind speed, and additional line
     message_parts = [
         f"{current_date_awst_str}:",
-        f"Expected {condition} with a top of {temperature_formatted}",
-        f"Wind speeds of around {wind_speed_formatted} expected from the {wind_direction_cardinal}, insha'allah."
+        f"> Expected {condition} with a top of {temperature_formatted}",
+        f"> Wind speeds of around {wind_speed_formatted} expected from the {wind_direction_cardinal}, insha'allah."
     ]
 
     if next_update_time is not None:
-        message_parts.append(f"Next weather message is <t:{next_update_time}:R>")
+        message_parts.append(f"> Next weather message is <t:{next_update_time}:R>")
 
     message_parts.append("ᵐᵃᵈᵉ ᵇʸ ᵃᵇᵈᵘˡˡᵃʰ ᵃʳᵃᶠᵃᵗ")
     
