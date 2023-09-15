@@ -19,16 +19,20 @@ def get_weather_data():
     return data
 
 # Function to post weather data to the Discord webhook
+# Function to post weather data to the Discord webhook
 def post_to_discord(data):
     # Replace this with your Discord webhook URL
-    webhook_url = "https://discord.com/api/webhooks/1152075250931073135/-AOJcH8y5KHn5A6yXvk5vmG0eGeL4_DGr2PLrtESLBXnllIvVkM4_WfoXCjbvcHbngdW"
+    webhook_url = "https://discord.com/api/webhooks/1152067074995273758/hvW6EvWVcFAo-xvUITxTEbvXEnDxK70rrchKxisccHAc1AZuVewSM-JIrR5OeD_ie58"
 
-    # Extract weather information from the API response
+    # Extract temperature information from the API response
     if "main" in data and "temp" in data["main"]:
-        temperature = data["main"]["temp"]
+        temperature_kelvin = data["main"]["temp"]
+        temperature_celsius = temperature_kelvin - 273.15  # Convert from Kelvin to Celsius
+        temperature_formatted = f"{temperature_celsius:.2f}°C"
     else:
-        temperature = "N/A"
+        temperature_formatted = "N/A"
 
+    # Extract weather condition, wind speed, and other relevant data
     if "weather" in data and len(data["weather"]) > 0 and "description" in data["weather"][0]:
         condition = data["weather"][0]["description"]
     else:
@@ -36,26 +40,27 @@ def post_to_discord(data):
 
     if "wind" in data and "speed" in data["wind"]:
         wind_speed = data["wind"]["speed"]
+        wind_speed_formatted = f"{wind_speed}km/h"
     else:
-        wind_speed = "N/A"
+        wind_speed_formatted = "N/A"
 
-    # Format the message
-    message = f"Saturday 16 September:\nExpected {condition} weather with a top of {temperature}°C\nFew Showers expected at around 2 to 3 a.m\nWind speeds of around {wind_speed}km/h expected, insha'allah."
+    # Format the message with the corrected temperature, condition, and wind speed
+    message = f"Saturday 16 September:\nExpected {condition} weather with a top of {temperature_formatted}\nFew Showers expected at around 2 to 3 a.m\nWind speeds of around {wind_speed_formatted} expected, insha'allah."
 
     payload = {
         "content": message,
     }
 
     response = requests.post(webhook_url, json=payload)
-    
+
     # Add logging
     if response.status_code == 200:
         print("Message posted successfully.")
     else:
         print(f"Failed to post message. Status code: {response.status_code}")
-    
+
     return response
-    return response
+
 
 # Main function
 def main():
