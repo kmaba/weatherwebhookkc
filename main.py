@@ -21,6 +21,7 @@ def get_weather_data():
 # Function to post weather data to the Discord webhook
 # Function to post weather data to the Discord webhook
 # Function to post weather data to the Discord webhook
+# Function to post weather data to the Discord webhook
 def post_to_discord(data):
     # Replace this with your new Discord webhook URL
     webhook_url = "https://discord.com/api/webhooks/1152075250931073135/-AOJcH8y5KHn5A6yXvk5vmG0eGeL4_DGr2PLrtESLBXnllIvVkM4_WfoXCjbvcHbngdW"
@@ -45,8 +46,8 @@ def post_to_discord(data):
     else:
         wind_speed_formatted = "N/A"
 
-    # Format the message with the corrected temperature, condition, and wind speed
-    message = f"Saturday 16 September:\nExpected {condition} weather with a top of {temperature_formatted}\nTake a look for yourself, https://openweathermap.org/city/2063523\nWind speeds of around {wind_speed_formatted} expected, insha'allah."
+    # Format the message with the corrected temperature, condition, wind speed, and additional line
+    message = f"Saturday 16 September:\nExpected {condition} with a top of {temperature_formatted}\nWind speeds of around {wind_speed_formatted} expected, insha'allah...\nTake a look for yourself, https://openweathermap.org/city/2063523\nᵐᵃᵈᵉ ᵇʸ ᵃᵇᵈᵘˡˡᵃʰ ᵃʳᵃᶠᵃᵗ"
 
     payload = {
         "content": message,
@@ -61,8 +62,6 @@ def post_to_discord(data):
         print(f"Failed to post message. Status code: {response.status_code}")
 
     return response
-
-
 
 # Main function
 def main():
