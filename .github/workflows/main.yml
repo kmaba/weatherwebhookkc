@@ -21,4 +21,4 @@ jobs:
       run: pip install requests
 
     - name: Run Weather Update Script
-      run: python your-script.py # Replace with the actual name of your Python script
+      run: python main.py # Replace with the actual name of your Python script
