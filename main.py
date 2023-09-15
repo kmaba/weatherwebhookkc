@@ -18,7 +18,7 @@ def get_weather_data():
     data = response.json()
     return data
 
-def post_to_discord(data):
+def post_to_discord(data, next_update_time=None):
     # Replace this with your new Discord webhook URL
     webhook_url = "https://discord.com/api/webhooks/1152075250931073135/-AOJcH8y5KHn5A6yXvk5vmG0eGeL4_DGr2PLrtESLBXnllIvVkM4_WfoXCjbvcHbngdW"
 
@@ -36,11 +36,14 @@ def post_to_discord(data):
     else:
         condition = "N/A"
 
-    if "wind" in data and "speed" in data["wind"]:
+    if "wind" in data:
         wind_speed = data["wind"]["speed"]
         wind_speed_formatted = f"{wind_speed}km/h"
+        wind_direction_degrees = data["wind"]["deg"]
+        wind_direction_cardinal = ["N", "NE", "E", "SE", "S", "SW", "W", "NW", "N"][round(wind_direction_degrees / 45) % 8]
     else:
         wind_speed_formatted = "N/A"
+        wind_direction_cardinal = "N/A"
 
     # Get the current date in AWST (Australian Western Standard Time)
     current_time_utc = datetime.datetime.utcnow()
@@ -48,8 +51,20 @@ def post_to_discord(data):
     current_date_awst_str = current_time_awst.strftime("%A %d %B")
 
     # Format the message with the corrected temperature, condition, wind speed, and additional line
-    message = f"{current_date_awst_str}:\nExpected {condition} with a top of {temperature_formatted}\nWind speeds of around {wind_speed_formatted} expected, insha'allah...\nTake a look for yourself: <https://openweathermap.org/city/2063523>\nᵐᵃᵈᵉ ᵇʸ ᵃᵇᵈᵘˡˡᵃʰ ᵃʳᵃᶠᵃᵗ"
+    message_parts = [
+        f"{current_date_awst_str}:",
+        f"Expected {condition} with a top of {temperature_formatted}",
+        f"Wind speeds of around {wind_speed_formatted} expected from the {wind_direction_cardinal}, insha'allah...",
+        "<https://openweathermap.org/city/2063523>",
+        "<t:{int(time.time())}:R>"
+    ]
 
+    if next_update_time is not None:
+        message_parts.append(f"Next update: <t:{next_update_time}:R>")
+
+    message_parts.append("ᵐᵃᵈᵉ ᵇʸ ᵃᵇᵈᵘˡˡᵃʰ ᵃʳᵃᶠᵃᵗ")
+    
+    message = "\n".join(message_parts)
 
     payload = {
         "content": message,
@@ -69,7 +84,12 @@ def post_to_discord(data):
 # Main function
 def main():
     weather_data = get_weather_data()
-    post_to_discord(weather_data)
+    
+    # Calculate the timestamp for the next run
+    current_time_utc = datetime.datetime.utcnow()
+    next_run_time_utc = current_time_utc + datetime.timedelta(days=1)
+    
+    post_to_discord(weather_data, int(next_run_time_utc.timestamp()))
 
 if __name__ == "__main__":
     main()
