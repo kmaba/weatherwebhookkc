@@ -21,7 +21,7 @@ def get_weather_data():
 # Function to post weather data to the Discord webhook
 def post_to_discord(data):
     # Replace this with your Discord webhook URL
-    webhook_url = "https://discord.com/api/webhooks/1152067074995273758/hvW6EvWVcFAo-xvUITxTEbvXEnDxK70rrchKxisccHAc1AZuVewSM-JIrR5OeD_ie58"
+    webhook_url = "https://discord.com/api/webhooks/1152075250931073135/-AOJcH8y5KHn5A6yXvk5vmG0eGeL4_DGr2PLrtESLBXnllIvVkM4_WfoXCjbvcHbngdW"
 
     # Extract weather information from the API response
     if "main" in data and "temp" in data["main"]:
