@@ -11,8 +11,8 @@ def get_weather_data():
     latitude = -31.9781
     longitude = 115.9556
 
-    # OpenWeatherMap API endpoint for current weather data
-    weather_api_url = f"https://api.openweathermap.org/data/2.5/weather?lat={latitude}&lon={longitude}&appid={api_key}"
+    # OpenWeatherMap API endpoint for daily forecast data
+    weather_api_url = f"https://api.openweathermap.org/data/2.5/onecall?lat={latitude}&lon={longitude}&exclude=current,minutely,hourly,alerts&appid={api_key}"
 
     response = requests.get(weather_api_url)
     data = response.json()
@@ -31,10 +31,13 @@ def post_to_discord(data, next_update_time=None):
         temperature_formatted = "N/A"
 
     # Extract weather condition, wind speed, and other relevant data
-    if "weather" in data and len(data["weather"]) > 0 and "description" in data["weather"][0]:
-        condition = data["weather"][0]["description"]
-    else:
-        condition = "N/A"
+if "daily" in data and len(data["daily"]) > 0 and "temp" in data["daily"][0] and "max" in data["daily"][0]["temp"]:
+    max_temperature_kelvin = data["daily"][0]["temp"]["max"]
+    max_temperature_celsius = max_temperature_kelvin - 273.15  # Convert from Kelvin to Celsius
+    max_temperature_formatted = f"{max_temperature_celsius:.2f}°C"
+else:
+    max_temperature_formatted = "N/A"
+
 
     if "wind" in data:
         wind_speed = data["wind"]["speed"]
