@@ -47,6 +47,14 @@ def post_to_discord(data):
     }
 
     response = requests.post(webhook_url, json=payload)
+    
+    # Add logging
+    if response.status_code == 200:
+        print("Message posted successfully.")
+    else:
+        print(f"Failed to post message. Status code: {response.status_code}")
+    
+    return response
     return response
 
 # Main function
