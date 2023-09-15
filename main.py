@@ -20,7 +20,7 @@ def get_weather_data():
 
 def post_to_discord(data):
     # Replace this with your new Discord webhook URL
-    webhook_url = "https://discord.com/api/webhooks/1152081939692531792/ge9OfoVVONFOVL_n1HOjMsS_wAThanFyS8d_9wEfv5CD9qZnOnhiQKYU1ED5Dwf93bdx"
+    webhook_url = "https://discord.com/api/webhooks/1152075250931073135/-AOJcH8y5KHn5A6yXvk5vmG0eGeL4_DGr2PLrtESLBXnllIvVkM4_WfoXCjbvcHbngdW"
 
     # Extract temperature information from the API response
     if "main" in data and "temp" in data["main"]:
@@ -42,8 +42,13 @@ def post_to_discord(data):
     else:
         wind_speed_formatted = "N/A"
 
+    # Get the current date in AWST (Australian Western Standard Time)
+    current_time_utc = datetime.datetime.utcnow()
+    current_time_awst = current_time_utc + datetime.timedelta(hours=8)
+    current_date_awst_str = current_time_awst.strftime("%A %d %B")
+
     # Format the message with the corrected temperature, condition, wind speed, and additional line
-    message = f"Saturday 16 September:\nExpected {condition} with a top of {temperature_formatted}\nWind speeds of around {wind_speed_formatted} expected, insha'allah...\nTake a look for yourself: <https://openweathermap.org/city/2063523>\nᵐᵃᵈᵉ ᵇʸ ᵃᵇᵈᵘˡˡᵃʰ ᵃʳᵃᶠᵃᵗ"
+    message = f"{current_date_awst_str}:\nExpected {condition} with a top of {temperature_formatted}\nWind speeds of around {wind_speed_formatted} expected, insha'allah...\nTake a look for yourself: <https://openweathermap.org/city/2063523>\nᵐᵃᵈᵉ ᵇʸ ᵃᵇᵈᵘˡˡᵃʰ ᵃʳᵃᶠᵃᵗ"
 
 
     payload = {
