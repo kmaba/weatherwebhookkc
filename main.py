@@ -46,7 +46,7 @@ def post_to_discord(data):
         wind_speed_formatted = "N/A"
 
     # Format the message with the corrected temperature, condition, and wind speed
-    message = f"Saturday 16 September:\nExpected {condition} weather with a top of {temperature_formatted}\nFew Showers expected at around 2 to 3 a.m\nWind speeds of around {wind_speed_formatted} expected, insha'allah."
+    message = f"Saturday 16 September:\nExpected {condition} weather with a top of {temperature_formatted}\nTake a look for yourself, https://openweathermap.org/city/2063523\nWind speeds of around {wind_speed_formatted} expected, insha'allah."
 
     payload = {
         "content": message,
