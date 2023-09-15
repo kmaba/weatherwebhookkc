@@ -47,7 +47,8 @@ def post_to_discord(data):
         wind_speed_formatted = "N/A"
 
     # Format the message with the corrected temperature, condition, wind speed, and additional line
-    message = f"Saturday 16 September:\nExpected {condition} with a top of {temperature_formatted}\nWind speeds of around {wind_speed_formatted} expected, insha'allah...\nTake a look for yourself, https://openweathermap.org/city/2063523\nᵐᵃᵈᵉ ᵇʸ ᵃᵇᵈᵘˡˡᵃʰ ᵃʳᵃᶠᵃᵗ"
+    message = f"Saturday 16 September:\nExpected {condition} with a top of {temperature_formatted}\nWind speeds of around {wind_speed_formatted} expected, insha'allah...\nTake a look for yourself: https://openweathermap.org/city/2063523\nᵐᵃᵈᵉ ᵇʸ ᵃᵇᵈᵘˡˡᵃʰ ᵃʳᵃᶠᵃᵗ"
+
 
     payload = {
         "content": message,
@@ -57,11 +58,9 @@ def post_to_discord(data):
 
     # Check if the message was posted successfully
     if response.status_code == 200:
-        print("Message posted successfully.")
+        print(f"Message posted successfully. Status code: {response.status_code}")
     else:
-        print(f"Failed to post message. Status code: {response.status_code}")
-
-    return response
+        return
 
 # Main function
 def main():
