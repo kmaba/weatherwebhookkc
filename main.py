@@ -18,10 +18,6 @@ def get_weather_data():
     data = response.json()
     return data
 
-# Function to post weather data to the Discord webhook
-# Function to post weather data to the Discord webhook
-# Function to post weather data to the Discord webhook
-# Function to post weather data to the Discord webhook
 def post_to_discord(data):
     # Replace this with your new Discord webhook URL
     webhook_url = "https://discord.com/api/webhooks/1152075250931073135/-AOJcH8y5KHn5A6yXvk5vmG0eGeL4_DGr2PLrtESLBXnllIvVkM4_WfoXCjbvcHbngdW"
@@ -47,11 +43,14 @@ def post_to_discord(data):
         wind_speed_formatted = "N/A"
 
     # Format the message with the corrected temperature, condition, wind speed, and additional line
-    message = f"Saturday 16 September:\nExpected {condition} with a top of {temperature_formatted}\nWind speeds of around {wind_speed_formatted} expected, insha'allah...\nTake a look for yourself: https://openweathermap.org/city/2063523\nᵐᵃᵈᵉ ᵇʸ ᵃᵇᵈᵘˡˡᵃʰ ᵃʳᵃᶠᵃᵗ"
+    message = f"Saturday 16 September:\nExpected {condition} with a top of {temperature_formatted}\nWind speeds of around {wind_speed_formatted} expected, insha'allah...\nTake a look for yourself: <https://openweathermap.org/city/2063523>\nᵐᵃᵈᵉ ᵇʸ ᵃᵇᵈᵘˡˡᵃʰ ᵃʳᵃᶠᵃᵗ"
 
 
     payload = {
         "content": message,
+        "allowed_mentions": {
+            "parse": []
+        }
     }
 
     response = requests.post(webhook_url, json=payload)
@@ -65,14 +64,7 @@ def post_to_discord(data):
 # Main function
 def main():
     weather_data = get_weather_data()
-    response = post_to_discord(weather_data)
-
-    # Calculate the timestamp for the next run
-    current_time = int(time.time())
-    next_run_time = current_time + 24 * 60 * 60  # 24 hours in seconds
-
-    # Post the timestamp to signify when the next run will happen
-    post_to_discord({"next_run_time": next_run_time})
+    post_to_discord(weather_data)
 
 if __name__ == "__main__":
     main()
