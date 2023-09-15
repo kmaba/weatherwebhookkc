@@ -20,9 +20,10 @@ def get_weather_data():
 
 # Function to post weather data to the Discord webhook
 # Function to post weather data to the Discord webhook
+# Function to post weather data to the Discord webhook
 def post_to_discord(data):
-    # Replace this with your Discord webhook URL
-    webhook_url = "https://discord.com/api/webhooks/1152067074995273758/hvW6EvWVcFAo-xvUITxTEbvXEnDxK70rrchKxisccHAc1AZuVewSM-JIrR5OeD_ie58"
+    # Replace this with your new Discord webhook URL
+    webhook_url = "https://discord.com/api/webhooks/1152075250931073135/-AOJcH8y5KHn5A6yXvk5vmG0eGeL4_DGr2PLrtESLBXnllIvVkM4_WfoXCjbvcHbngdW"
 
     # Extract temperature information from the API response
     if "main" in data and "temp" in data["main"]:
@@ -53,13 +54,14 @@ def post_to_discord(data):
 
     response = requests.post(webhook_url, json=payload)
 
-    # Add logging
+    # Check if the message was posted successfully
     if response.status_code == 200:
         print("Message posted successfully.")
     else:
         print(f"Failed to post message. Status code: {response.status_code}")
 
     return response
+
 
 
 # Main function
