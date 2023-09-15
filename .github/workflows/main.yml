@@ -1,0 +1,23 @@
+name: Weather Update
+
+on:
+  schedule:
+    - cron: "30 21 * * *" # This runs the job at 7:30 AM AWST (replace with your timezone)
+
+jobs:
+  update-weather:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.x
+
+    - name: Install dependencies
+      run: pip install requests
+
+    - name: Run Weather Update Script
+      run: python your-script.py # Replace with the actual name of your Python script
