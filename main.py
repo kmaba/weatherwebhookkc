@@ -54,8 +54,7 @@ def post_to_discord(data, next_update_time=None):
     message_parts = [
         f"{current_date_awst_str}:",
         f"Expected {condition} with a top of {temperature_formatted}",
-        f"Wind speeds of around {wind_speed_formatted} expected from the {wind_direction_cardinal}, insha'allah.",
-        "Take a look for yourself 😁: <https://openweathermap.org/city/2063523>"
+        f"Wind speeds of around {wind_speed_formatted} expected from the {wind_direction_cardinal}, insha'allah."
     ]
 
     if next_update_time is not None:
