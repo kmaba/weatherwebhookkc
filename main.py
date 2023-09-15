@@ -24,9 +24,20 @@ def post_to_discord(data):
     webhook_url = "https://discord.com/api/webhooks/1152067074995273758/hvW6EvWVcFAo-xvUITxTEbvXEnDxK70rrchKxisccHAc1AZuVewSM-JIrR5OeD_ie58"
 
     # Extract weather information from the API response
-    temperature = data["main"]["temp"]
-    condition = data["weather"][0]["description"]
-    wind_speed = data["wind"]["speed"]
+    if "main" in data and "temp" in data["main"]:
+        temperature = data["main"]["temp"]
+    else:
+        temperature = "N/A"
+
+    if "weather" in data and len(data["weather"]) > 0 and "description" in data["weather"][0]:
+        condition = data["weather"][0]["description"]
+    else:
+        condition = "N/A"
+
+    if "wind" in data and "speed" in data["wind"]:
+        wind_speed = data["wind"]["speed"]
+    else:
+        wind_speed = "N/A"
 
     # Format the message
     message = f"Saturday 16 September:\nExpected {condition} weather with a top of {temperature}°C\nFew Showers expected at around 2 to 3 a.m\nWind speeds of around {wind_speed}km/h expected, insha'allah."
