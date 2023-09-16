@@ -23,26 +23,23 @@ def post_to_discord(data, next_update_time=None):
     webhook_url = "https://discord.com/api/webhooks/1152081939692531792/ge9OfoVVONFOVL_n1HOjMsS_wAThanFyS8d_9wEfv5CD9qZnOnhiQKYU1ED5Dwf93bdx"
 
     # Extract temperature information from the API response
-    if "main" in data and "temp" in data["main"]:
-        temperature_kelvin = data["main"]["temp"]
-        temperature_celsius = temperature_kelvin - 273.15  # Convert from Kelvin to Celsius
-        temperature_formatted = f"{temperature_celsius:.2f}°C"
+    if "daily" in data and len(data["daily"]) > 0 and "temp" in data["daily"][0] and "max" in data["daily"][0]["temp"]:
+        max_temperature_kelvin = data["daily"][0]["temp"]["max"]
+        max_temperature_celsius = max_temperature_kelvin - 273.15  # Convert from Kelvin to Celsius
+        max_temperature_formatted = f"{max_temperature_celsius:.2f}°C"
     else:
-        temperature_formatted = "N/A"
+        max_temperature_formatted = "N/A"
 
     # Extract weather condition, wind speed, and other relevant data
-if "daily" in data and len(data["daily"]) > 0 and "temp" in data["daily"][0] and "max" in data["daily"][0]["temp"]:
-    max_temperature_kelvin = data["daily"][0]["temp"]["max"]
-    max_temperature_celsius = max_temperature_kelvin - 273.15  # Convert from Kelvin to Celsius
-    max_temperature_formatted = f"{max_temperature_celsius:.2f}°C"
-else:
-    max_temperature_formatted = "N/A"
+    if "weather" in data["daily"][0] and len(data["daily"][0]["weather"]) > 0 and "description" in data["daily"][0]["weather"][0]:
+        condition = data["daily"][0]["weather"][0]["description"]
+    else:
+        condition = "N/A"
 
-
-    if "wind" in data:
-        wind_speed = data["wind"]["speed"]
+    if "wind_speed" in data["daily"][0] and "wind_deg" in data["daily"][0]:
+        wind_speed = data["daily"][0]["wind_speed"]
         wind_speed_formatted = f"{wind_speed}km/h"
-        wind_direction_degrees = data["wind"]["deg"]
+        wind_direction_degrees = data["daily"][0]["wind_deg"]
         wind_direction_cardinal = ["N", "NE", "E", "SE", "S", "SW", "W", "NW", "N"][round(wind_direction_degrees / 45) % 8]
     else:
         wind_speed_formatted = "N/A"
@@ -56,7 +53,7 @@ else:
     # Format the message with the corrected temperature, condition, wind speed, and additional line
     message_parts = [
         f"{current_date_awst_str}:",
-        f"> Expected {condition} with a top of {temperature_formatted}",
+        f"> Expected {condition} with a top of {max_temperature_formatted}",
         f"> Wind speeds of around {wind_speed_formatted} expected from the {wind_direction_cardinal}, insha'allah."
     ]
 
