@@ -26,11 +26,15 @@ def post_to_discord(data, next_update_time=None):
     if "main" in data:
         temperature_max_kelvin = data["main"]["temp_max"]
         temperature_min_kelvin = data["main"]["temp_min"]
+        feels_like_kelvin = data["main"]["feels_like"]
         temperature_max_celsius = temperature_max_kelvin - 273.15  # Convert from Kelvin to Celsius
         temperature_min_celsius = temperature_min_kelvin - 273.15  # Convert from Kelvin to Celsius
+        feels_like_celsius = feels_like_kelvin - 273.15  # Convert from Kelvin to Celsius
         temperature_formatted = f"{temperature_min_celsius:.2f}°C - {temperature_max_celsius:.2f}°C"
+        feels_like_formatted = f"{feels_like_celsius:.2f}°C"
     else:
         temperature_formatted = "N/A"
+        feels_like_formatted = "N/A"
 
     # Extract weather condition, wind speed, and other relevant data
     if "weather" in data and len(data["weather"]) > 0 and "description" in data["weather"][0]:
@@ -55,7 +59,7 @@ def post_to_discord(data, next_update_time=None):
     # Format the message with the corrected temperature, condition, wind speed, and additional line
     message_parts = [
         f"{current_date_awst_str}:",
-        f"> Expected {condition} with a range of {temperature_formatted}",
+        f"> Expected {condition} with a range of {temperature_formatted}. Feels like {feels_like_formatted}",
         f"> Wind speeds of around {wind_speed_formatted} expected from the {wind_direction_cardinal}, insha'allah."
     ]
 
