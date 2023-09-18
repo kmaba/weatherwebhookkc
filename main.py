@@ -2,17 +2,16 @@ import requests
 import datetime
 import time
 
-# Replace with your OpenWeatherMap API key
-api_key = "5628c7dd3703a739cf10c3d5709d257f"
+# Replace with your AccuWeather API key
+api_key = "7IH90mfoKf1kSx1i5CSw48fzEvm2PaMn"
 
 # Function to get weather data
 def get_weather_data():
-    # Replace with the coordinates of Kewdale, WA
-    latitude = -31.9781
-    longitude = 115.9556
+    # Location key for Kewdale, WA
+    location_key = "16490"
 
-    # OpenWeatherMap API endpoint for current weather data
-    weather_api_url = f"https://api.openweathermap.org/data/2.5/weather?lat={latitude}&lon={longitude}&appid={api_key}"
+    # AccuWeather API endpoint for current weather data
+    weather_api_url = f"http://dataservice.accuweather.com/currentconditions/v1/{location_key}?apikey={api_key}"
 
     response = requests.get(weather_api_url)
     data = response.json()
@@ -23,32 +22,30 @@ def post_to_discord(data, next_update_time=None):
     webhook_url = "https://discord.com/api/webhooks/1152081939692531792/ge9OfoVVONFOVL_n1HOjMsS_wAThanFyS8d_9wEfv5CD9qZnOnhiQKYU1ED5Dwf93bdx"
 
     # Extract temperature information from the API response
-    if "main" in data:
-        temperature_max_kelvin = data["main"]["temp_max"]
-        temperature_min_kelvin = data["main"]["temp_min"]
-        feels_like_kelvin = data["main"]["feels_like"]
-        temperature_max_celsius = temperature_max_kelvin - 273.15  # Convert from Kelvin to Celsius
-        temperature_min_celsius = temperature_min_kelvin - 273.15  # Convert from Kelvin to Celsius
-        feels_like_celsius = feels_like_kelvin - 273.15  # Convert from Kelvin to Celsius
-        temperature_formatted = f"{temperature_min_celsius:.2f}°C - {temperature_max_celsius:.2f}°C"
-        feels_like_formatted = f"{feels_like_celsius:.2f}°C"
+    if "Temperature" in data[0] and "Imperial" in data[0]["Temperature"]:
+        temperature_fahrenheit = data[0]["Temperature"]["Imperial"]["Value"]
+        temperature_celsius = (temperature_fahrenheit - 32) * 5/9  # Convert from Fahrenheit to Celsius
+        temperature_formatted = f"{temperature_celsius:.2f}°C"
     else:
         temperature_formatted = "N/A"
-        feels_like_formatted = "N/A"
 
     # Extract weather condition, wind speed, and other relevant data
-    if "weather" in data and len(data["weather"]) > 0 and "description" in data["weather"][0]:
-        condition = data["weather"][0]["description"]
+    if "WeatherText" in data[0]:
+        condition = data[0]["WeatherText"]
     else:
         condition = "N/A"
 
-    if "wind" in data:
-        wind_speed = data["wind"]["speed"]
-        wind_speed_formatted = f"{wind_speed}km/h"
-        wind_direction_degrees = data["wind"]["deg"]
-        wind_direction_cardinal = ["N", "NE", "E", "SE", "S", "SW", "W", "NW", "N"][round(wind_direction_degrees / 45) % 8]
+    if "Wind" in data[0] and "Speed" in data[0]["Wind"] and "Imperial" in data[0]["Wind"]["Speed"]:
+        wind_speed_mph = data[0]["Wind"]["Speed"]["Imperial"]["Value"]
+        wind_speed_kmh = wind_speed_mph * 1.60934  # Convert from mph to km/h
+        wind_speed_formatted = f"{wind_speed_kmh}km/h"
     else:
         wind_speed_formatted = "N/A"
+
+    if "Wind" in data[0] and "Direction" in data[0]["Wind"] and "Degrees" in data[0]["Wind"]["Direction"]:
+        wind_direction_degrees = data[0]["Wind"]["Direction"]["Degrees"]
+        wind_direction_cardinal = ["N", "NE", "E", "SE", "S", "SW", "W", "NW", "N"][round(wind_direction_degrees / 45) % 8]
+    else:
         wind_direction_cardinal = "N/A"
 
     # Get the current date in AWST (Australian Western Standard Time)
@@ -59,7 +56,7 @@ def post_to_discord(data, next_update_time=None):
     # Format the message with the corrected temperature, condition, wind speed, and additional line
     message_parts = [
         f"{current_date_awst_str}:",
-        f"> Expected {condition} with a range of {temperature_formatted}. Feels like {feels_like_formatted}",
+        f"> Expected {condition} with a top of {temperature_formatted}",
         f"> Wind speeds of around {wind_speed_formatted} expected from the {wind_direction_cardinal}, insha'allah."
     ]
 
