@@ -85,7 +85,7 @@ def post_to_discord(data, forecast_data, next_update_time=None):
 
 # Main function
 def main():
-    weather_data = get_weather_data()
+     weather_data = get_weather_data()
     
      # Get the precipitation forecast
      forecast_data = get_precipitation_forecast()
