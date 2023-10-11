@@ -2,52 +2,54 @@ import requests
 import datetime
 import time
 
-# Replace with your AccuWeather API key
-api_key = "7IH90mfoKf1kSx1i5CSw48fzEvm2PaMn"
+# Replace with your OpenWeatherMap API key
+api_key = "5628c7dd3703a739cf10c3d5709d257f"
 
 # Function to get weather data
 def get_weather_data():
-    # Location key for Kewdale, WA
-    location_key = "16490"
+    # Replace with the coordinates of Kewdale, WA
+    latitude = -31.9781
+    longitude = 115.9556
 
-    # AccuWeather API endpoint for current weather data
-    weather_api_url = f"http://dataservice.accuweather.com/currentconditions/v1/{location_key}?apikey={api_key}"
+    # OpenWeatherMap API endpoint for current weather data
+    weather_api_url = f"https://api.openweathermap.org/data/2.5/weather?lat={latitude}&lon={longitude}&appid={api_key}"
 
     response = requests.get(weather_api_url)
     data = response.json()
     return data
 
-def get_precipitation_forecast():
-    # AccuWeather API endpoint for MinuteCast forecast
-    minutecast_api_url = f"http://dataservice.accuweather.com/forecasts/v1/minute/{location_key}?apikey={api_key}"
-
-    response = requests.get(minutecast_api_url)
-    forecast_data = response.json()
-    return forecast_data
-
-def post_to_discord(data, forecast_data, next_update_time=None):
+def post_to_discord(data, next_update_time=None):
     # Replace this with your new Discord webhook URL
     webhook_url = "https://discord.com/api/webhooks/1152081939692531792/ge9OfoVVONFOVL_n1HOjMsS_wAThanFyS8d_9wEfv5CD9qZnOnhiQKYU1ED5Dwf93bdx"
 
     # Extract temperature information from the API response
-    if "Temperature" in data[0] and "Imperial" in data[0]["Temperature"]:
-        temperature_fahrenheit = data[0]["Temperature"]["Imperial"]["Value"]
-        temperature_celsius = (temperature_fahrenheit - 32) * 5/9  # Convert from Fahrenheit to Celsius
-        temperature_formatted = f"{temperature_celsius:.2f}°C"
+    if "main" in data:
+        temperature_max_kelvin = data["main"]["temp_max"]
+        temperature_min_kelvin = data["main"]["temp_min"]
+        feels_like_kelvin = data["main"]["feels_like"]
+        temperature_max_celsius = temperature_max_kelvin - 273.15  # Convert from Kelvin to Celsius
+        temperature_min_celsius = temperature_min_kelvin - 273.15  # Convert from Kelvin to Celsius
+        feels_like_celsius = feels_like_kelvin - 273.15  # Convert from Kelvin to Celsius
+        temperature_formatted = f"{temperature_min_celsius:.2f}°C - {temperature_max_celsius:.2f}°C"
+        feels_like_formatted = f"{feels_like_celsius:.2f}°C"
     else:
         temperature_formatted = "N/A"
+        feels_like_formatted = "N/A"
 
-    # Extract weather condition from the API response
-    if "WeatherText" in data[0]:
-        condition = data[0]["WeatherText"]
+    # Extract weather condition, wind speed, and other relevant data
+    if "weather" in data and len(data["weather"]) > 0 and "description" in data["weather"][0]:
+        condition = data["weather"][0]["description"]
     else:
         condition = "N/A"
 
-    # Extract precipitation forecast from the forecast data
-    if "Summary" in forecast_data and "Phrase" in forecast_data["Summary"]:
-        precipitation_forecast = forecast_data["Summary"]["Phrase"]
+    if "wind" in data:
+        wind_speed = data["wind"]["speed"]
+        wind_speed_formatted = f"{wind_speed}km/h"
+        wind_direction_degrees = data["wind"]["deg"]
+        wind_direction_cardinal = ["N", "NE", "E", "SE", "S", "SW", "W", "NW", "N"][round(wind_direction_degrees / 45) % 8]
     else:
-        precipitation_forecast = "N/A"
+        wind_speed_formatted = "N/A"
+        wind_direction_cardinal = "N/A"
 
     # Get the current date in AWST (Australian Western Standard Time)
     current_time_utc = datetime.datetime.utcnow()
@@ -57,8 +59,8 @@ def post_to_discord(data, forecast_data, next_update_time=None):
     # Format the message with the corrected temperature, condition, wind speed, and additional line
     message_parts = [
         f"{current_date_awst_str}:",
-        f"> Expected {condition} with a top of {temperature_formatted}",
-        f"> Precipitation forecast: {precipitation_forecast}"
+        f"> Expected {condition} with a range of {temperature_formatted}. Feels like {feels_like_formatted}",
+        f"> Wind speeds of around {wind_speed_formatted} expected from the {wind_direction_cardinal}, insha'allah."
     ]
 
     if next_update_time is not None:
@@ -85,16 +87,13 @@ def post_to_discord(data, forecast_data, next_update_time=None):
 
 # Main function
 def main():
-     weather_data = get_weather_data()
+    weather_data = get_weather_data()
     
-     # Get the precipitation forecast
-     forecast_data = get_precipitation_forecast()
-
-     # Calculate the timestamp for the next run
-     current_time_utc = datetime.datetime.utcnow()
-     next_run_time_utc = current_time_utc + datetime.timedelta(days=1)
+    # Calculate the timestamp for the next run
+    current_time_utc = datetime.datetime.utcnow()
+    next_run_time_utc = current_time_utc + datetime.timedelta(days=1)
     
-     post_to_discord(weather_data, forecast_data, int(next_run_time_utc.timestamp()))
+    post_to_discord(weather_data, int(next_run_time_utc.timestamp()))
 
 if __name__ == "__main__":
-     main()
+    main()
