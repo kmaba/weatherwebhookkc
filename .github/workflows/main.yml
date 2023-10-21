@@ -1,8 +1,8 @@
 name: Weather Update
 
 on:
-  schedule:
-    - cron: "30 23 * * *" # This runs the job at 7:30 AM AWST (UTC+8)
+  # schedule:
+  #   - cron: "30 23 * * *" # This runs the job at 7:30 AM AWST (UTC+8)
   workflow_dispatch: # This allows manual runs using the "Run workflow" button
 
 jobs:
